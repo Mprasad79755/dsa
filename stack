@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 5
+
+int stack[MAX_SIZE], top = -1;
+
+void push() {
+    if (top == MAX_SIZE - 1) {
+        printf("\nStack Overflow: Cannot push more elements.\n");
+        return;
+    }
+    int item;
+    printf("Enter the element to be inserted: ");
+    scanf("%d", &item);
+    stack[++top] = item;
+    printf("Element %d pushed into the stack.\n", item);
+}
+
+void pop() {
+    if (top == -1) {
+        printf("\nStack Underflow: No elements to pop.\n");
+        return;
+    }
+    int item = stack[top--];
+    printf("\nThe popped element: %d\n", item);
+}
+
+void display() {
+    if (top == -1) {
+        printf("\nStack is Empty.\n");
+        return;
+    }
+    printf("\nStack elements are:\n");
+    for (int i = top; i >= 0; i--)
+        printf("%d\n", stack[i]);
+}
+
+void palindrome() {
+    if (top == -1) {
+        printf("\nStack is Empty. Cannot check for palindrome.\n");
+        return;
+    }
+
+    int is_palindrome = 1;  // Assume stack is palindrome
+    for (int i = 0, j = top; i < j; i++, j--) {
+        if (stack[i] != stack[j]) {
+            is_palindrome = 0;
+            break;
+        }
+    }
+
+    printf("\nStack elements are:\n");
+    for (int i = top; i >= 0; i--)
+        printf("%d ", stack[i]);
+
+    if (is_palindrome)
+        printf("\n\nThe stack is a palindrome.\n");
+    else
+        printf("\n\nThe stack is not a palindrome.\n");
+}
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n\n-------- STACK OPERATIONS -----------\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Palindrome\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
+        printf("------------------------------------\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                push();
+                break;
+            case 2:
+                pop();
+                break;
+            case 3:
+                palindrome();
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                printf("\nExiting program. Goodbye!\n");
+                exit(0);
+            default:
+                printf("\nInvalid choice! Please try again.\n");
+        }
+    }
+    return 0;
+}
