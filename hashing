@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SLOTS 15  // Number of slots in the hash table
+
+struct records {
+    int flag;       // 0 = empty, 1 = occupied
+    int usn;        // Key (USN, 4 digits)
+    char name[20];  // Name of the student
+} rec[SLOTS];
+
+int hash(int usn) {
+    return usn % SLOTS;
+}
+
+void initializeTable() {
+    for (int i = 0; i < SLOTS; i++) {
+        rec[i].flag = 0;
+    }
+}
+
+void displayTable() {
+    printf("\n\nThe Hash Table Content is: ");
+    for (int i = 0; i < SLOTS; i++) {
+        if (rec[i].flag == 1)
+            printf("\n%s     %d", rec[i].name, rec[i].usn);
+        else
+            printf("\n##");
+    }
+}
+
+void writeToFile(const char *filename) {
+    FILE *outp = fopen(filename, "w");
+    if (!outp) {
+        printf("\nError opening output file!");
+        return;
+    }
+    for (int i = 0; i < SLOTS; i++) {
+        if (rec[i].flag == 1)
+            fprintf(outp, "%s | %d\n", rec[i].name, rec[i].usn);
+        else
+            fprintf(outp, "# | #\n");
+    }
+    fclose(outp);
+}
+
+void insertRecord(const char *name, int usn) {
+    int loc = hash(usn);
+    int originalLoc = loc;
+
+    // Linear probing
+    while (rec[loc].flag == 1) {
+        loc = (loc + 1) % SLOTS;
+        if (loc == originalLoc) {
+            printf("\nHash table is full! Cannot insert record: %s %d", name, usn);
+            return;
+        }
+    }
+
+    // Insert record
+    strcpy(rec[loc].name, name);
+    rec[loc].usn = usn;
+    rec[loc].flag = 1;
+    printf("\nInserted at address: %d", loc);
+}
+
+int main() {
+    char name[20];
+    int usn, n;
+
+    FILE *in = fopen("input.txt", "r");
+    if (!in) {
+        printf("\nError opening input file!");
+        return 1;
+    }
+
+    printf("\nEnter the number of records to read from the file: ");
+    scanf("%d", &n);
+
+    if (n > SLOTS) {
+        printf("\nPlease provide less than or equal to %d records!", SLOTS);
+        fclose(in);
+        return 1;
+    }
+
+    initializeTable();
+
+    for (int i = 0; i < n; i++) {
+        if (fscanf(in, "%s %d", name, &usn) != 2) {
+            printf("\nError reading record from file!");
+            fclose(in);
+            return 1;
+        }
+        insertRecord(name, usn);
+    }
+    fclose(in);
+
+    displayTable();
+
+    writeToFile("output.txt");
+
+    return 0;
+}
