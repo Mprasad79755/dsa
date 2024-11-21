@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 5
+
+void enqueue(int q[], int *f, int *r, int item) {
+    if ((*r + 1) % SIZE == *f) {
+        printf("Queue is full. Enqueue not possible.\n");
+        return;
+    }
+    if (*f == -1) {
+        *f = 0; // Initialize front
+    }
+    *r = (*r + 1) % SIZE; // Update rear
+    q[*r] = item;
+    printf("Enqueued: %d\n", item);
+}
+
+void dequeue(int q[], int *f, int *r) {
+    if (*f == -1) {
+        printf("Queue is empty. Dequeue not possible.\n");
+        return;
+    }
+    printf("Dequeued: %d\n", q[*f]);
+    if (*f == *r) {
+        *f = *r = -1; // Reset when queue becomes empty
+    } else {
+        *f = (*f + 1) % SIZE; // Update front
+    }
+}
+
+void display(int q[], int *f, int *r) {
+    if (*f == -1) {
+        printf("Queue is empty. Nothing to display.\n");
+        return;
+    }
+    printf("Queue elements:\n");
+    int i = *f;
+    while (1) {
+        printf("Queue[%d] = %d\n", i, q[i]);
+        if (i == *r) break;
+        i = (i + 1) % SIZE;
+    }
+}
+
+int main() {
+    int q[SIZE], front = -1, rear = -1, item, choice;
+    while (1) {
+        printf("Options: 1-Enqueue 2-Dequeue 3-Display 4-Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the element to enqueue: ");
+                scanf("%d", &item);
+                enqueue(q, &front, &rear, item);
+                break;
+            case 2:
+                dequeue(q, &front, &rear);
+                break;
+            case 3:
+                display(q, &front, &rear);
+                break;
+            case 4:
+                printf("Exiting...\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+    return 0;
+}
