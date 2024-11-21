@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct node {
+    struct node *prev;
+    int ssn, phno;
+    float sal;
+    char name[20], dept[10], desg[20];
+    struct node *next;
+} *head = NULL, *tail = NULL;
+
+int count = 0;
+
+// Function to create a new node
+struct node* createNode() {
+    struct node *newnode = (struct node *)malloc(sizeof(struct node));
+    if (!newnode) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    printf("\nEnter SSN, Name, Department, Designation, Salary, and Phone Number: ");
+    scanf("%d %s %s %s %f %d", &newnode->ssn, newnode->name, newnode->dept, newnode->desg, &newnode->sal, &newnode->phno);
+    newnode->prev = newnode->next = NULL;
+    count++;
+    return newnode;
+}
+
+// Function to insert at the beginning
+void insertAtBeginning() {
+    struct node *newnode = createNode();
+    if (head == NULL) {
+        head = tail = newnode;
+    } else {
+        newnode->next = head;
+        head->prev = newnode;
+        head = newnode;
+    }
+    printf("Node inserted at the beginning.\n");
+}
+
+// Function to insert at the end
+void insertAtEnd() {
+    struct node *newnode = createNode();
+    if (head == NULL) {
+        head = tail = newnode;
+    } else {
+        tail->next = newnode;
+        newnode->prev = tail;
+        tail = newnode;
+    }
+    printf("Node inserted at the end.\n");
+}
+
+// Function to display the list from the beginning
+void displayFromBeginning() {
+    if (head == NULL) {
+        printf("The list is empty.\n");
+        return;
+    }
+    printf("\nLinked List Elements from Beginning:\n");
+    printf("SSN\tName\t\tDept\tDesg\t\tSalary\tPhone\n");
+    printf("-------------------------------------------------------------\n");
+    struct node *temp = head;
+    while (temp != NULL) {
+        printf("%d\t%-10s\t%-5s\t%-10s\t%.2f\t%d\n", temp->ssn, temp->name, temp->dept, temp->desg, temp->sal, temp->phno);
+        temp = temp->next;
+    }
+    printf("\nTotal Number of Employees: %d\n", count);
+}
+
+// Function to delete from the beginning
+void deleteFromBeginning() {
+    if (head == NULL) {
+        printf("The list is empty. Nothing to delete.\n");
+        return;
+    }
+    struct node *temp = head;
+    printf("\nDeleting Node: %d %s %s %s %.2f %d\n", temp->ssn, temp->name, temp->dept, temp->desg, temp->sal, temp->phno);
+    if (head == tail) { // Single node case
+        head = tail = NULL;
+    } else {
+        head = head->next;
+        head->prev = NULL;
+    }
+    free(temp);
+    count--;
+}
+
+// Function to delete from the end
+void deleteFromEnd() {
+    if (head == NULL) {
+        printf("The list is empty. Nothing to delete.\n");
+        return;
+    }
+    struct node *temp = tail;
+    printf("\nDeleting Node: %d %s %s %s %.2f %d\n", temp->ssn, temp->name, temp->dept, temp->desg, temp->sal, temp->phno);
+    if (head == tail) { // Single node case
+        head = tail = NULL;
+    } else {
+        tail = tail->prev;
+        tail->next = NULL;
+    }
+    free(temp);
+    count--;
+}
+
+int main() {
+    int choice, n, i;
+    printf("-----------------MENU--------------------\n");
+    printf("1 - Create DLL with n employees\n");
+    printf("2 - Display list from beginning\n");
+    printf("3 - Insert at end\n");
+    printf("4 - Delete from end\n");
+    printf("5 - Insert at beginning\n");
+    printf("6 - Delete from beginning\n");
+    printf("7 - Exit\n");
+    printf("------------------------------------------\n");
+
+    while (1) {
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("\nEnter the number of employees: ");
+                scanf("%d", &n);
+                for (i = 0; i < n; i++) {
+                    insertAtEnd();
+                }
+                break;
+            case 2:
+                displayFromBeginning();
+                break;
+            case 3:
+                insertAtEnd();
+                break;
+            case 4:
+                deleteFromEnd();
+                break;
+            case 5:
+                insertAtBeginning();
+                break;
+            case 6:
+                deleteFromBeginning();
+                break;
+            case 7:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+    return 0;
+}
