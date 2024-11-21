@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count = 0;
+
+struct node {
+    char usn[10], name[10], branch[3];
+    int sem, ph;
+    struct node *next;
+} *first = NULL, *temp = NULL;
+
+// Function to create a new node with student details
+void createNode() {
+    temp = (struct node *)malloc(sizeof(struct node));
+    if (!temp) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    printf("\nEnter Student Details:\n");
+    printf("USN: ");
+    scanf("%s", temp->usn);
+    printf("Name: ");
+    scanf("%s", temp->name);
+    printf("Branch: ");
+    scanf("%s", temp->branch);
+    printf("Semester: ");
+    scanf("%d", &temp->sem);
+    printf("Phone Number: ");
+    scanf("%d", &temp->ph);
+    temp->next = NULL;
+    count++;
+}
+
+// Function to insert a node at the front
+void insertFront() {
+    createNode();
+    temp->next = first;
+    first = temp;
+}
+
+// Function to insert a node at the last
+void insertLast() {
+    createNode();
+    if (first == NULL) {
+        first = temp;
+    } else {
+        struct node *current = first;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = temp;
+    }
+}
+
+// Function to delete a node from the front
+void deleteFront() {
+    if (first == NULL) {
+        printf("\nNo nodes in the list to delete.\n");
+        return;
+    }
+    struct node *toDelete = first;
+    first = first->next;
+    free(toDelete);
+    count--;
+    printf("\nNode deleted from the front.\n");
+}
+
+// Function to delete a node from the last
+void deleteLast() {
+    if (first == NULL) {
+        printf("\nNo nodes in the list to delete.\n");
+        return;
+    }
+    if (first->next == NULL) {
+        free(first);
+        first = NULL;
+    } else {
+        struct node *current = first;
+        struct node *prev = NULL;
+        while (current->next != NULL) {
+            prev = current;
+            current = current->next;
+        }
+        prev->next = NULL;
+        free(current);
+    }
+    count--;
+    printf("\nNode deleted from the last.\n");
+}
+
+// Function to display the list
+void display() {
+    if (first == NULL) {
+        printf("\nNo nodes to display.\n");
+        return;
+    }
+    printf("\nThere are %d node(s) in the list.\n", count);
+    printf("Student Details:\n");
+    printf("USN\t\tName\t\tBranch\tSem\tPhone\n");
+    printf("---------------------------------------------------\n");
+    struct node *current = first;
+    while (current != NULL) {
+        printf("%-10s\t%-10s\t%-3s\t%-3d\t%-10d\n", current->usn, current->name, current->branch, current->sem, current->ph);
+        current = current->next;
+    }
+}
+
+// Main function
+int main() {
+    int choice, num;
+
+    while (1) {
+        printf("\n-->MENU<--\n");
+        printf("1. Create SLL\n2. Display Records\n3. Insert at Last\n4. Delete at Last\n5. Insert at Front\n6. Delete at Front\n7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("\nEnter the number of student records to create: ");
+                scanf("%d", &num);
+                for (int i = 0; i < num; i++) {
+                    insertFront();
+                }
+                break;
+            case 2:
+                display();
+                break;
+            case 3:
+                insertLast();
+                break;
+            case 4:
+                deleteLast();
+                break;
+            case 5:
+                insertFront();
+                break;
+            case 6:
+                deleteFront();
+                break;
+            case 7:
+                printf("\nExiting program.\n");
+                exit(0);
+            default:
+                printf("\nInvalid choice. Please try again.\n");
+        }
+    }
+    return 0;
+}
