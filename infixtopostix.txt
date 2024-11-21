@@ -1,0 +1,75 @@
+// if alnum or ( add it to px
+// if ) until ( pop to px, pop (
+// else pre[top] > pre[ch] pop to px. puch ch
+//display px
+
+#include <stdio.h>
+#include <ctype.h>
+
+#define MAX 50
+int s[MAX];
+int top = -1;
+
+void push(char item){
+    s[++top] = item;
+}
+
+char pop(){
+    return s[top--];
+}
+
+int pre(char c){
+    switch(c){
+        case '#': return 0;
+        case '(' : return 1;
+        case '+': case '-': return 2;
+        case '*': case'/' : case '%' : return 3;
+        case '^': return 4;
+        default: return -1; 
+        
+    }
+}
+
+int main(){
+    char infx[50] , pofx[50];
+    char ch; int k = 0; int i = 0;
+    
+    printf("Enter the infix expression: ");
+    scanf("%s" , &infx);
+    push('#');
+    
+    while((ch=infx[i++]) != '\0'){
+        if(isalnum(ch)){
+            pofx[k++] = ch;
+        }
+        else if(ch =='('){
+            push(ch);
+        }
+        else if (ch == ')'){
+            while(s[top] != '('){
+               pofx[k++] = pop() ;
+            }
+            pop();
+        }
+        else{
+            while(pre(s[top]) >= pre(ch) ){
+                pofx[k++] = pop();
+            }
+            push(ch);
+        }
+    }
+    
+    while(s[top] != '#'){
+        pofx[k++] = pop();
+    }
+    
+    pofx[k] = '\0';
+    
+    printf("Infix = %s" , infx);
+    printf("\n\n");
+    printf("Postfix = %s" , pofx);
+    
+    
+    
+    return 0;
+}
